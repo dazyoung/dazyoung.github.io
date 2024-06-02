@@ -18,6 +18,7 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    <script src="/custom.geo.json"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
 
     <script>
@@ -32,6 +33,22 @@
         // Initialize the FeatureGroup to store editable layers
         var editableLayers = new L.FeatureGroup();
         map.addLayer(editableLayers);
+
+        fetch('/custom.geo.json')
+        .then(response => response.json())
+        .then(geojsonData => {
+            const visitedCountries = ['United States', 'Canada', 'Mexico']; // Modify this array with your visited countries
+
+            L.geoJSON(geojsonData, {
+            style: feature => ({
+                fillColor: visitedCountries.includes(feature.properties.name) ? 'green' : 'gray',
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                fillOpacity: 0.7
+            })
+            }).addTo(map);
+        });
 
         // Initialize the draw control and pass it the FeatureGroup of editable layers
         var drawControl = new L.Control.Draw({
